@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bolão Mega-Sena (6 Dezenas) — Controle e Conferência</title>
+  <style>
+    :root {
+      --verde-escuro: #0b5d3b;
+      --verde-medio: #148a57;
+      --verde-claro: #22b573;
+      --dourado: #f5b700;
+      --dourado-claro: #ffe066;
+      --roxo: #5b2c83;
+      --azul: #005ca9;
+      --fundo: #eef6f1;
+      --cartao: #ffffff;
+      --texto: #16241d;
+      --borda: #cfe2d7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(160deg, var(--verde-escuro) 0%, var(--verde-medio) 42%, var(--fundo) 42.2%);
+      min-height: 100vh;
+      color: var(--texto);
+      padding: 24px 16px 48px;
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .painel-topo,
+    .volante,
+    .secao-conferencia,
+    .secao-participantes {
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 12px 32px rgba(11, 93, 59, 0.14);
+      border: 1.5px solid var(--borda);
+      margin-bottom: 22px;
+    }
+
+    .painel-topo {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.97);
+    }
+
+    .painel-topo h1 {
+      font-size: 1.3rem;
+      color: var(--verde-escuro);
+      margin-bottom: 8px;
+    }
+
+    .regras-caixa-box {
+      background: #f1f8f4;
+      border-left: 4px solid var(--verde-medio);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.86rem;
+      color: #214031;
+      margin-bottom: 14px;
+    }
+
+    .controles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .campo label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #365244;
+    }
+
+    .campo input,
+    .campo select {
+      padding: 9px 12px;
+      border-radius: 9px;
+      border: 1.5px solid var(--borda);
+      font-size: 0.94rem;
+      background: #fff;
+      color: var(--texto);
+    }
+
+    .campo input[readonly] {
+      background: #f3f7f5;
+      font-weight: 700;
+      color: var(--verde-escuro);
+    }
+
+    .campo input:focus,
+    .campo select:focus {
+      outline: none;
+      border-color: var(--verde-medio);
+    }
+
+    .acoes-barra {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 9px;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      transition: transform 0.12s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-verde {
+      background: var(--verde-medio);
+      color: #fff;
+    }
+
+    .btn-dourado {
+      background: var(--dourado);
+      color: #1a1a1a;
+    }
+
+    .btn-roxo {
+      background: var(--roxo);
+      color: #fff;
+    }
+
+    .btn-azul {
+      background: var(--azul);
+      color: #fff;
+    }
+
+    .btn-neutro {
+      background: #e6efe9;
+      color: var(--verde-escuro);
+    }
+
+    /* Volante */
+    .volante {
+      overflow: hidden;
+      border: 2px solid var(--verde-medio);
+    }
+
+    .banner-logo {
+      padding: 20px 24px;
+      color: #fff;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .tema-sorte {
+      background: linear-gradient(120deg, #094d30 0%, #148a57 60%, #1ea86b 100%);
+    }
+
+    .tema-super {
+      background: linear-gradient(120deg, #3a165c 0%, #5b2c83 55%, #8a3ab9 100%);
+    }
+
+    .tema-familia {
+      background: linear-gradient(120deg, #003f75 0%, #005ca9 60%, #1482d6 100%);
+    }
+
+    .logo-marca {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .bolas-decorativas {
+      display: grid;
+      grid-template-columns: repeat(2, 24px);
+      gap: 5px;
+    }
+
+    .bola-mini {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--dourado) 55%, #b87b00 100%);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    .logo-titulos .titulo-principal {
+      display: inline-block;
+      font-size: clamp(1.45rem, 3vw, 2.2rem);
+      font-weight: 900;
+      font-style: italic;
+      text-transform: uppercase;
+      background: #fff;
+      color: var(--verde-escuro);
+      padding: 4px 14px;
+      border-radius: 10px;
+      box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    .tema-super .logo-titulos .titulo-principal {
+      color: var(--roxo);
+    }
+
+    .tema-familia .logo-titulos .titulo-principal {
+      color: var(--azul);
+    }
+
+    .logo-titulos .subtitulo-bolao {
+      margin-top: 6px;
+      font-size: 0.9rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--dourado-claro);
+    }
+
+    .resumo-bolao {
+      background: rgba(0, 0, 0, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 12px;
+      padding: 12px 16px;
+      min-width: 290px;
+      text-align: right;
+    }
+
+    .resumo-bolao .linha-resumo {
+      font-size: 0.86rem;
+      margin-bottom: 3px;
+    }
+
+    .resumo-bolao .valor-cota {
+      font-size: 1.12rem;
+      font-weight: 900;
+      color: var(--dourado-claro);
+    }
+
+    .corpo-volante {
+      padding: 20px 22px;
+    }
+
+    .instrucao-topo {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed var(--borda);
+      font-size: 0.92rem;
+    }
+
+    .badge-selecao {
+      background: #e7f6ee;
+      color: var(--verde-escuro);
+      border: 1px solid #9fd8b8;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .grelha-numeros {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .btn-numero {
+      aspect-ratio: 1 / 1;
+      max-height: 52px;
+      width: 100%;
+      border-radius: 50%;
+      border: 2px solid #8cc7a8;
+      background: #f8fcfa;
+      color: var(--verde-escuro);
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+
+    .btn-numero.marcado {
+      background: linear-gradient(145deg, var(--verde-claro), var(--verde-escuro));
+      color: #fff;
+      border-color: var(--dourado);
+      box-shadow: 0 4px 10px rgba(11, 93, 59, 0.35);
+      transform: scale(1.04);
+    }
+
+    .secao-jogos h2,
+    .secao-conferencia h2,
+    .secao-participantes h2 {
+      font-size: 1.05rem;
+      color: var(--verde-escuro);
+      margin-bottom: 12px;
+    }
+
+    .lista-jogos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .cartao-jogo {
+      border: 1.5px solid var(--borda);
+      background: #fafdfb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cartao-jogo.premiado {
+      border-color: var(--dourado);
+      background: #fffbeb;
+      box-shadow: 0 4px 14px rgba(245, 183, 0, 0.25);
+    }
+
+    .cartao-jogo-topo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #486657;
+    }
+
+    .bolas-jogo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .bola-resultado {
+      width: 31px;
+      height: 31px;
+      border-radius: 50%;
+      background: var(--verde-escuro);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.82rem;
+      display: grid;
+      place-items: center;
+      border: 2px solid #9fd8b8;
+    }
+
+    .bola-resultado.acertou {
+      background: var(--dourado);
+      color: #16241d;
+      border-color: #9e6b00;
+      transform: scale(1.08);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .badge-acertos {
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: #e6efe9;
+      color: var(--verde-escuro);
+      align-self: flex-start;
+    }
+
+    .badge-acertos.premio {
+      background: var(--dourado);
+      color: #1a1a1a;
+    }
+
+    /* Conferência de Resultado */
+    .secao-conferencia {
+      padding: 20px 22px;
+      border-left: 5px solid var(--dourado);
+    }
+
+    .inputs-sorteio {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .dezena-sorteada-input {
+      width: 56px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--verde-medio);
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--verde-escuro);
+      background: #f8fcfa;
+    }
+
+    .dezena-sorteada-input:focus {
+      outline: none;
+      border-color: var(--dourado);
+      background: #fffdf2;
+    }
+
+    .resultado-geral-box {
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #f1f8f4;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--verde-escuro);
+      display: none;
+    }
+
+    /* Participantes */
+    .secao-participantes {
+      padding: 20px 22px;
+    }
+
+    .form-participante {
+      display: grid;
+      grid-template-columns: 1.8fr 1.2fr 1.2fr 0.7fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .tabela-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--borda);
+      text-align: left;
+    }
+
+    th {
+      background: #f1f8f4;
+      color: var(--verde-escuro);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .status-pill {
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .status-pago {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #6ee7b7;
+    }
+
+    .status-pendente {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    .btn-remover {
+      background: transparent;
+      color: #b42318;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+    }
+
+    .resumo-texto-box {
+      margin-top: 16px;
+      background: #f6fbf8;
+      border: 1px solid var(--borda);
+      border-radius: 10px;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.82rem;
+      white-space: pre-wrap;
+      color: #1f352a;
+    }
+
+    @media (max-width: 1024px) {
+      .form-participante {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grelha-numeros {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 6px;
+      }
+
+      .form-participante {
+        grid-template-columns: 1fr;
+      }
+
+      .resumo-bolao {
+        width: 100%;
+        text-align: left;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .painel-topo,
+      .acoes-barra,
+      .form-participante,
+      .btn-remover,
+      .no-print {
+        display: none !important;
+      }
+
+      .volante,
+      .secao-conferencia,
+      .secao-participantes {
+        box-shadow: none;
+        border: 1px solid #999;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Configuração -->
+    <section class="painel-topo">
+      <h1>Bolão Mega-Sena — 6 Dezenas por Jogo</h1>
+      <div class="regras-caixa-box">
+        <strong>Regras de referência (6 dezenas):</strong> R$ 6,00 por jogo (aposta simples) • de 2 a 10 cotas • mínimo de R$ 18,00 no bolão (mín. 3 jogos) e mínimo de R$ 7,00 por cota na Caixa • até 10 jogos no mesmo recibo.
+      </div>
+
+      <div class="controles-grid">
+        <div class="campo">
+          <label for="estiloLogo">Estilo do Logotipo</label>
+          <select id="estiloLogo">
+            <option value="tema-sorte">MEGA-SENA • Bolão da Sorte</option>
+            <option value="tema-super">BOLÃO SUPER PRÊMIO</option>
+            <option value="tema-familia">BOLÃO FAMÍLIA</option>
+          </select>
+        </div>
+
+        <div class="campo">
+          <label for="tituloPersonalizado">Título Principal</label>
+          <input id="tituloPersonalizado" type="text" value="MEGA-SENA" maxlength="24" />
+        </div>
+
+        <div class="campo">
+          <label for="subtituloPersonalizado">Subtítulo / Grupo</label>
+          <input id="subtituloPersonalizado" type="text" value="6 DEZENAS • BOLÃO DA SORTE" maxlength="36" />
+        </div>
+
+        <div class="campo">
+          <label for="qtdDezenas">Dezenas por Jogo</label>
+          <input id="qtdDezenas" type="text" value="6 números (R$ 6,00 / jogo)" readonly />
+        </div>
+
+        <div class="campo">
+          <label for="numCotas">Total de Cotas (2 a 10)</label>
+          <input id="numCotas" type="number" min="2" max="10" value="8" />
+        </div>
+
+        <div class="campo">
+          <label for="valorCotaPadrao">Valor Padrão / Cota (R$)</label>
+          <input id="valorCotaPadrao" type="number" min="7" step="0.50" value="7.50" />
+        </div>
+      </div>
+
+      <div class="acoes-barra">
+        <button class="btn-verde" id="btnGuardarJogo" type="button">+ Adicionar Jogo (6 Dezenas)</button>
+        <button class="btn-dourado" id="btnSurpresinha" type="button">Surpresinha (6 Números)</button>
+        <button class="btn-neutro" id="btnLimparMarcacao" type="button">Limpar Seleção</button>
+        <button class="btn-roxo" id="btnImprimir" type="button">Imprimir / Salvar PDF</button>
+      </div>
+    </section>
+
+    <!-- Volante -->
+    <main class="volante">
+      <header class="banner-logo tema-sorte" id="bannerLogo">
+        <div class="logo-marca">
+          <div class="bolas-decorativas" aria-hidden="true">
+            <span class="bola-mini"></span>
+            <span class="bola-mini"></span>
+            <span class="bola-mini"></span>
+            <span class="bola-mini"></span>
+          </div>
+          <div class="logo-titulos">
+            <div class="titulo-principal" id="displayTitulo">MEGA-SENA</div>
+            <div class="subtitulo-bolao" id="displaySubtitulo">6 DEZENAS • BOLÃO DA SORTE</div>
+          </div>
+        </div>
+
+        <aside class="resumo-bolao">
+          <div class="linha-resumo" id="resumoJogosCotas">0/10 jogos • 0/8 cotas ocupadas</div>
+          <div class="valor-cota" id="resumoValorCota">R$ 7,50 / cota (padrão)</div>
+          <div class="linha-resumo" id="resumoFinanceiro">Pago: R$ 0,00 • Pendente: R$ 0,00</div>
+        </aside>
+      </header>
+
+      <div class="corpo-volante">
+        <div class="instrucao-topo">
+          <span>Marque exatamente <strong>6 números</strong> de <strong>01</strong> a <strong>60</strong> por jogo:</span>
+          <span class="badge-selecao" id="contadorMarcados">Marcados: 0 / 6</span>
+        </div>
+
+        <div class="grelha-numeros" id="grelhaNumeros" role="group" aria-label="Números de 1 a 60"></div>
+
+        <section class="secao-jogos">
+          <h2>Jogos de 6 Dezenas (<span id="totalJogosCount">0</span> / 10)</h2>
+          <div class="lista-jogos" id="listaJogos"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Conferência de Resultado do Sorteio -->
+    <section class="secao-conferencia">
+      <h2>Conferência de Resultado do Sorteio</h2>
+      <div class="inputs-sorteio">
+        <input class="dezena-sorteada-input" type="number" min="1" max="60" placeholder="01" aria-label="1ª dezena sorteada" />
+        <input class="dezena-sorteada-input" type="number" min="1" max="60" placeholder="02" aria-label="2ª dezena sorteada" />
+        <input class="dezena-sorteada-input" type="number" min="1" max="60" placeholder="03" aria-label="3ª dezena sorteada" />
+        <input class="dezena-sorteada-input" type="number" min="1" max="60" placeholder="04" aria-label="4ª dezena sorteada" />
+        <input class="dezena-sorteada-input" type="number" min="1" max="60" placeholder="05" aria-label="5ª dezena sorteada" />
+        <input class="dezena-sorteada-input" type="number" min="1" max="60" placeholder="06" aria-label="6ª dezena sorteada" />
+
+        <button class="btn-azul" id="btnConferirResultado" type="button">Conferir Resultado</button>
+        <button class="btn-neutro" id="btnLimparConferencia" type="button">Limpar Conferência</button>
+      </div>
+      <div class="resultado-geral-box" id="resultadoGeralBox"></div>
+    </section>
+
+    <!-- Participantes -->
+    <section class="secao-participantes">
+      <h2>Participantes do Bolão (<span id="totalParticipantesCount">0</span>)</h2>
+
+      <form class="form-participante" id="formParticipante">
+        <div class="campo">
+          <label for="nomeParticipante">Nome Completo</label>
+          <input id="nomeParticipante" type="text" placeholder="Ex.: Maria da Silva" required />
+        </div>
+
+        <div class="campo">
+          <label for="cpfParticipante">CPF</label>
+          <input id="cpfParticipante" type="text" placeholder="000.000.000-00" maxlength="14" required />
+        </div>
+
+        <div class="campo">
+          <label for="celularParticipante">Celular</label>
+          <input id="celularParticipante" type="tel" placeholder="(11) 99999-9999" maxlength="15" required />
+        </div>
+
+        <div class="campo">
+          <label for="cotasParticipante">Cotas</label>
+          <input id="cotasParticipante" type="number" min="1" max="10" value="1" required />
+        </div>
+
+        <div class="campo">
+          <label for="valorCotaParticipante">Valor / Cota (R$)</label>
+          <input id="valorCotaParticipante" type="number" min="0" step="0.50" value="7.50" required />
+        </div>
+
+        <div class="campo">
+          <label for="statusParticipante">Pagamento</label>
+          <select id="statusParticipante">
+            <option value="Pendente" selected>Pendente</option>
+            <option value="Pago">Pago</option>
+          </select>
+        </div>
+
+        <button class="btn-verde" type="submit">+ Incluir</button>
+      </form>
+
+      <div class="tabela-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th>Celular</th>
+              <th>Cotas</th>
+              <th>Valor / Cota</th>
+              <th>Total</th>
+              <th>Status (clique para alterar)</th>
+              <th class="no-print">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="corpoTabelaParticipantes">
+            <tr>
+              <td colspan="9" style="color:#5c7669;">Nenhum participante cadastrado ainda.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="acoes-barra no-print" style="margin-top: 14px;">
+        <button class="btn-neutro" id="btnCopiarResumo" type="button">Copiar Resumo (WhatsApp / Texto)</button>
+        <span id="feedbackCopia" style="font-size:0.85rem;font-weight:700;color:var(--verde-escuro);align-self:center;"></span>
+      </div>
+
+      <div class="resumo-texto-box" id="resumoTexto"></div>
+    </section>
+  </div>
+
+  <script>
+    const LIMITE_DEZENAS = 6;
+    const MAX_JOGOS_BOLAO = 10;
+    const MIN_COTAS_CAIXA = 2;
+    const MAX_COTAS_CAIXA = 10;
+    const VALOR_REF_JOGO_6_DEZENAS = 6.00;
+    const VALOR_MIN_COTA_CAIXA = 7.00;
+
+    const grelhaEl = document.getElementById("grelhaNumeros");
+    const listaJogosEl = document.getElementById("listaJogos");
+    const contadorMarcadosEl = document.getElementById("contadorMarcados");
+    const totalJogosCountEl = document.getElementById("totalJogosCount");
+
+    const estiloLogoEl = document.getElementById("estiloLogo");
+    const tituloPersonalizadoEl = document.getElementById("tituloPersonalizado");
+    const subtituloPersonalizadoEl = document.getElementById("subtituloPersonalizado");
+    const numCotasEl = document.getElementById("numCotas");
+    const valorCotaPadraoEl = document.getElementById("valorCotaPadrao");
+
+    const bannerLogoEl = document.getElementById("bannerLogo");
+    const displayTituloEl = document.getElementById("displayTitulo");
+    const displaySubtituloEl = document.getElementById("displaySubtitulo");
+    const resumoJogosCotasEl = document.getElementById("resumoJogosCotas");
+    const resumoValorCotaEl = document.getElementById("resumoValorCota");
+    const resumoFinanceiroEl = document.getElementById("resumoFinanceiro");
+
+    const formParticipanteEl = document.getElementById("formParticipante");
+    const nomeParticipanteEl = document.getElementById("nomeParticipante");
+    const cpfParticipanteEl = document.getElementById("cpfParticipante");
+    const celularParticipanteEl = document.getElementById("celularParticipante");
+    const cotasParticipanteEl = document.getElementById("cotasParticipante");
+    const valorCotaParticipanteEl = document.getElementById("valorCotaParticipante");
+    const statusParticipanteEl = document.getElementById("statusParticipante");
+    const corpoTabelaParticipantesEl = document.getElementById("corpoTabelaParticipantes");
+    const totalParticipantesCountEl = document.getElementById("totalParticipantesCount");
+    const resumoTextoEl = document.getElementById("resumoTexto");
+    const feedbackCopiaEl = document.getElementById("feedbackCopia");
+    const resultadoGeralBoxEl = document.getElementById("resultadoGeralBox");
+
+    let selecionados = new Set();
+    let jogosSalvos = [];
+    let participantes = [];
+    let resultadoSorteio = new Set();
+
+    function formatarDezena(num) {
+      return String(num).padStart(2, "0");
+    }
+
+    function formatarMoeda(valor) {
+      return Number(valor || 0).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function formatarCPF(valor) {
+      const d = valor.replace(/\D/g, "").slice(0, 11);
+      return d
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+    }
+
+    function formatarCelular(valor) {
+      const d = valor.replace(/\D/g, "").slice(0, 11);
+      if (d.length <= 10) {
+        return d
+          .replace(/(\d{2})(\d)/, "($1) $2")
+          .replace(/(\d{4})(\d{1,4})$/, "$1-$2");
+      }
+      return d
+        .replace(/(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{5})(\d{1,4})$/, "$1-$2");
+    }
+
+    function obterTotalCotasNormalizado() {
+      const bruto = parseInt(numCotasEl.value, 10) || MIN_COTAS_CAIXA;
+      return Math.min(MAX_COTAS_CAIXA, Math.max(MIN_COTAS_CAIXA, bruto));
+    }
+
+    function sugerirValorCotaPadrao() {
+      const totalCotas = obterTotalCotasNormalizado();
+      const qtdJogos = Math.max(3, jogosSalvos.length);
+      const valorSugerido = (qtdJogos * VALOR_REF_JOGO_6_DEZENAS) / totalCotas;
+      return Math.max(VALOR_MIN_COTA_CAIXA, Number(valorSugerido.toFixed(2)));
+    }
+
+    cpfParticipanteEl.addEventListener("input", () => {
+      cpfParticipanteEl.value = formatarCPF(cpfParticipanteEl.value);
+    });
+
+    celularParticipanteEl.addEventListener("input", () => {
+      celularParticipanteEl.value = formatarCelular(celularParticipanteEl.value);
+    });
+
+    valorCotaPadraoEl.addEventListener("input", () => {
+      valorCotaParticipanteEl.value = valorCotaPadraoEl.value;
+      atualizarResumo();
+    });
+
+    function criarGrelha() {
+      grelhaEl.innerHTML = "";
+      for (let i = 1; i <= 60; i++) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn-numero";
+        btn.textContent = formatarDezena(i);
+        btn.dataset.num = i;
+        btn.addEventListener("click", () => alternarNumero(i));
+        grelhaEl.appendChild(btn);
+      }
+    }
+
+    function alternarNumero(num) {
+      if (selecionados.has(num)) {
+        selecionados.delete(num);
+      } else {
+        if (selecionados.size >= LIMITE_DEZENAS) {
+          alert(`Cada jogo deve ter exatamente ${LIMITE_DEZENAS} números.`);
+          return;
+        }
+        selecionados.add(num);
+      }
+      atualizarVisualSelecao();
+    }
+
+    function atualizarVisualSelecao() {
+      contadorMarcadosEl.textContent = `Marcados: ${selecionados.size} / ${LIMITE_DEZENAS}`;
+      document.querySelectorAll(".btn-numero").forEach((btn) => {
+        const n = parseInt(btn.dataset.num, 10);
+        btn.classList.toggle("marcado", selecionados.has(n));
+      });
+    }
+
+    function gerarSurpresinha() {
+      const pool = Array.from({ length: 60 }, (_, idx) => idx + 1);
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      selecionados = new Set(pool.slice(0, LIMITE_DEZENAS).sort((a, b) => a - b));
+      atualizarVisualSelecao();
+    }
+
+    function guardarJogo() {
+      if (jogosSalvos.length >= MAX_JOGOS_BOLAO) {
+        alert(`O bolão permite no máximo ${MAX_JOGOS_BOLAO} jogos por recibo.`);
+        return;
+      }
+      if (selecionados.size !== LIMITE_DEZENAS) {
+        alert(`Marque exatamente ${LIMITE_DEZENAS} números para adicionar um jogo.`);
+        return;
+      }
+      jogosSalvos.push(Array.from(selecionados).sort((a, b) => a - b));
+      selecionados.clear();
+      valorCotaPadraoEl.value = sugerirValorCotaPadrao().toFixed(2);
+      valorCotaParticipanteEl.value = valorCotaPadraoEl.value;
+      atualizarVisualSelecao();
+      renderizarJogos();
+      atualizarResumo();
+    }
+
+    function removerJogo(index) {
+      jogosSalvos.splice(index, 1);
+      valorCotaPadraoEl.value = sugerirValorCotaPadrao().toFixed(2);
+      valorCotaParticipanteEl.value = valorCotaPadraoEl.value;
+      renderizarJogos();
+      atualizarResumo();
+    }
+
+    function obterTextoPremio(acertos) {
+      if (acertos === 6) return "SENA! (6 acertos)";
+      if (acertos === 5) return "QUINA! (5 acertos)";
+      if (acertos === 4) return "QUADRA! (4 acertos)";
+      return `${acertos} acerto(s)`;
+    }
+
+    function renderizarJogos() {
+      totalJogosCountEl.textContent = jogosSalvos.length;
+      listaJogosEl.innerHTML = "";
+
+      if (jogosSalvos.length === 0) {
+        listaJogosEl.innerHTML = `<p style="color:#5c7669;font-size:0.9rem;">Nenhum jogo de 6 dezenas adicionado ainda.</p>`;
+        return;
+      }
+
+      const temConferencia = resultadoSorteio.size === 6;
+
+      jogosSalvos.forEach((dezenas, idx) => {
+        const acertos = temConferencia
+          ? dezenas.filter((d) => resultadoSorteio.has(d)).length
+          : 0;
+        const premiado = temConferencia && acertos >= 4;
+
+        const cartao = document.createElement("div");
+        cartao.className = `cartao-jogo${premiado ? " premiado" : ""}`;
+
+        const topo = document.createElement("div");
+        topo.className = "cartao-jogo-topo";
+        topo.innerHTML = `<span>JOGO #${idx + 1} • 6 DEZENAS (R$ 6,00)</span>`;
+
+        const btnRem = document.createElement("button");
+        btnRem.type = "button";
+        btnRem.className = "btn-remover";
+        btnRem.textContent = "Remover";
+        btnRem.addEventListener("click", () => removerJogo(idx));
+        topo.appendChild(btnRem);
+
+        const bolas = document.createElement("div");
+        bolas.className = "bolas-jogo";
+        dezenas.forEach((d) => {
+          const bola = document.createElement("span");
+          const acertouDezena = temConferencia && resultadoSorteio.has(d);
+          bola.className = `bola-resultado${acertouDezena ? " acertou" : ""}`;
+          bola.textContent = formatarDezena(d);
+          bolas.appendChild(bola);
+        });
+
+        cartao.appendChild(topo);
+        cartao.appendChild(bolas);
+
+        if (temConferencia) {
+          const badge = document.createElement("span");
+          badge.className = `badge-acertos${premiado ? " premio" : ""}`;
+          badge.textContent = obterTextoPremio(acertos);
+          cartao.appendChild(badge);
+        }
+
+        listaJogosEl.appendChild(cartao);
+      });
+    }
+
+    function conferirResultadoSorteio() {
+      const inputs = Array.from(document.querySelectorAll(".dezena-sorteada-input"));
+      const valores = inputs.map((inp) => parseInt(inp.value, 10));
+
+      if (valores.some((n) => isNaN(n) || n < 1 || n > 60)) {
+        alert("Preencha as 6 dezenas sorteadas com números válidos entre 01 e 60.");
+        return;
+      }
+
+      const conjunto = new Set(valores);
+      if (conjunto.size !== 6) {
+        alert("Não repita números no resultado do sorteio.");
+        return;
+      }
+
+      resultadoSorteio = conjunto;
+      renderizarJogos();
+
+      if (jogosSalvos.length === 0) {
+        resultadoGeralBoxEl.style.display = "block";
+        resultadoGeralBoxEl.textContent = `Resultado registrado (${Array.from(resultadoSorteio).sort((a, b) => a - b).map(formatarDezena).join(" - ")}), mas ainda não há jogos cadastrados para conferir.`;
+        atualizarResumo();
+        return;
+      }
+
+      let senas = 0;
+      let quinas = 0;
+      let quadras = 0;
+      let melhorAcerto = 0;
+
+      jogosSalvos.forEach((jogo) => {
+        const acertos = jogo.filter((d) => resultadoSorteio.has(d)).length;
+        if (acertos > melhorAcerto) melhorAcerto = acertos;
+        if (acertos === 6) senas++;
+        if (acertos === 5) quinas++;
+        if (acertos === 4) quadras++;
+      });
+
+      const sorteadasFmt = Array.from(resultadoSorteio).sort((a, b) => a - b).map(formatarDezena).join(" - ");
+      resultadoGeralBoxEl.style.display = "block";
+
+      if (senas || quinas || quadras) {
+        resultadoGeralBoxEl.textContent = `Sorteio (${sorteadasFmt}): ${senas} Sena(s), ${quinas} Quina(s) e ${quadras} Quadra(s) encontrada(s)!`;
+      } else {
+        resultadoGeralBoxEl.textContent = `Sorteio (${sorteadasFmt}): Nenhum jogo premiado (maior pontuação: ${melhorAcerto} acerto(s)).`;
+      }
+
+      atualizarResumo();
+    }
+
+    function limparConferencia() {
+      document.querySelectorAll(".dezena-sorteada-input").forEach((inp) => {
+        inp.value = "";
+      });
+      resultadoSorteio.clear();
+      resultadoGeralBoxEl.style.display = "none";
+      resultadoGeralBoxEl.textContent = "";
+      renderizarJogos();
+      atualizarResumo();
+    }
+
+    formParticipanteEl.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const totalCotasDisponiveis = obterTotalCotasNormalizado();
+      const cotasOcupadas = participantes.reduce((acc, p) => acc + p.cotas, 0);
+
+      const nome = nomeParticipanteEl.value.trim();
+      const cpf = cpfParticipanteEl.value.trim();
+      const celular = celularParticipanteEl.value.trim();
+      const cotas = Math.max(1, parseInt(cotasParticipanteEl.value, 10) || 1);
+      const valorCota = Math.max(0, parseFloat(valorCotaParticipanteEl.value) || 0);
+      const status = statusParticipanteEl.value;
+
+      if (!nome || !cpf || !celular) return;
+
+      if (cotasOcupadas + cotas > totalCotasDisponiveis) {
+        const restantes = totalCotasDisponiveis - cotasOcupadas;
+        alert(`Limite de cotas excedido. Restam apenas ${restantes} cota(s) disponível(is).`);
+        return;
+      }
+
+      participantes.push({ nome, cpf, celular, cotas, valorCota, status });
+      nomeParticipanteEl.value = "";
+      cpfParticipanteEl.value = "";
+      celularParticipanteEl.value = "";
+      cotasParticipanteEl.value = "1";
+      valorCotaParticipanteEl.value = valorCotaPadraoEl.value || "7.50";
+      statusParticipanteEl.value = "Pendente";
+      nomeParticipanteEl.focus();
+
+      renderizarParticipantes();
+      atualizarResumo();
+    });
+
+    function alternarStatusParticipante(index) {
+      participantes[index].status = participantes[index].status === "Pago" ? "Pendente" : "Pago";
+      renderizarParticipantes();
+      atualizarResumo();
+    }
+
+    function removerParticipante(index) {
+      participantes.splice(index, 1);
+      renderizarParticipantes();
+      atualizarResumo();
+    }
+
+    function renderizarParticipantes() {
+      totalParticipantesCountEl.textContent = participantes.length;
+      corpoTabelaParticipantesEl.innerHTML = "";
+
+      if (participantes.length === 0) {
+        corpoTabelaParticipantesEl.innerHTML = `
+          <tr>
+            <td colspan="9" style="color:#5c7669;">Nenhum participante cadastrado ainda.</td>
+          </tr>`;
+        return;
+      }
+
+      participantes.forEach((p, idx) => {
+        const totalPessoa = p.cotas * p.valorCota;
+        const pago = p.status === "Pago";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td><strong>${p.nome}</strong></td>
+          <td>${p.cpf}</td>
+          <td>${p.celular}</td>
+          <td>${p.cotas}</td>
+          <td>${formatarMoeda(p.valorCota)}</td>
+          <td><strong>${formatarMoeda(totalPessoa)}</strong></td>
+        `;
+
+        const tdStatus = document.createElement("td");
+        const btnStatus = document.createElement("button");
+        btnStatus.type = "button";
+        btnStatus.className = `status-pill ${pago ? "status-pago" : "status-pendente"}`;
+        btnStatus.textContent = p.status;
+        btnStatus.title = "Clique para alternar entre Pago e Pendente";
+        btnStatus.addEventListener("click", () => alternarStatusParticipante(idx));
+        tdStatus.appendChild(btnStatus);
+        tr.appendChild(tdStatus);
+
+        const tdAcao = document.createElement("td");
+        tdAcao.className = "no-print";
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn-remover";
+        btn.textContent = "Excluir";
+        btn.addEventListener("click", () => removerParticipante(idx));
+        tdAcao.appendChild(btn);
+        tr.appendChild(tdAcao);
+
+        corpoTabelaParticipantesEl.appendChild(tr);
+      });
+    }
+
+    function atualizarBanner() {
+      bannerLogoEl.className = `banner-logo ${estiloLogoEl.value}`;
+      displayTituloEl.textContent = tituloPersonalizadoEl.value.trim() || "MEGA-SENA";
+      displaySubtituloEl.textContent = subtituloPersonalizadoEl.value.trim() || "6 DEZENAS • BOLÃO DA SORTE";
+    }
+
+    function atualizarResumo() {
+      const totalCotasDisponiveis = obterTotalCotasNormalizado();
+      const valorPadrao = Math.max(0, parseFloat(valorCotaPadraoEl.value) || 0);
+      const cotasOcupadas = participantes.reduce((acc, p) => acc + p.cotas, 0);
+
+      const totalPago = participantes
+        .filter((p) => p.status === "Pago")
+        .reduce((acc, p) => acc + (p.cotas * p.valorCota), 0);
+
+      const totalPendente = participantes
+        .filter((p) => p.status !== "Pago")
+        .reduce((acc, p) => acc + (p.cotas * p.valorCota), 0);
+
+      resumoJogosCotasEl.textContent = `${jogosSalvos.length}/${MAX_JOGOS_BOLAO} jogos • ${cotasOcupadas}/${totalCotasDisponiveis} cotas`;
+      resumoValorCotaEl.textContent = `${formatarMoeda(valorPadrao)} / cota (padrão)`;
+      resumoFinanceiroEl.textContent = `Pago: ${formatarMoeda(totalPago)} • Pendente: ${formatarMoeda(totalPendente)}`;
+
+      const temConferencia = resultadoSorteio.size === 6;
+      const sorteadasFmt = temConferencia
+        ? Array.from(resultadoSorteio).sort((a, b) => a - b).map(formatarDezena).join(" - ")
+        : "";
+
+      const linhasJogos = jogosSalvos.length
+        ? jogosSalvos.map((j, i) => {
+            const base = `Jogo ${i + 1}: ${j.map(formatarDezena).join(" - ")}`;
+            if (!temConferencia) return base;
+            const acertos = j.filter((d) => resultadoSorteio.has(d)).length;
+            return `${base} -> ${obterTextoPremio(acertos)}`;
+          }).join("\n")
+        : "Nenhum jogo cadastrado.";
+
+      const linhasParticipantes = participantes.length
+        ? participantes.map((p, i) => {
+            const totalPessoa = p.cotas * p.valorCota;
+            return `${i + 1}. ${p.nome} | CPF: ${p.cpf} | Cel: ${p.celular} | ${p.cotas} cota(s) x ${formatarMoeda(p.valorCota)} = ${formatarMoeda(totalPessoa)} [${p.status.toUpperCase()}]`;
+          }).join("\n")
+        : "Nenhum participante cadastrado.";
+
+      resumoTextoEl.textContent =
+`${displayTituloEl.textContent} — ${displaySubtituloEl.textContent}
+Jogos: ${jogosSalvos.length}/${MAX_JOGOS_BOLAO} (6 dezenas) | Cotas: ${cotasOcupadas}/${totalCotasDisponiveis}
+Pago: ${formatarMoeda(totalPago)} | Pendente: ${formatarMoeda(totalPendente)}${temConferencia ? `\nResultado Sorteio: ${sorteadasFmt}` : ""}
+
+--- JOGOS ---
+${linhasJogos}
+
+--- PARTICIPANTES ---
+${linhasParticipantes}`;
+    }
+
+    [estiloLogoEl, tituloPersonalizadoEl, subtituloPersonalizadoEl].forEach((el) => {
+      el.addEventListener("input", () => {
+        atualizarBanner();
+        atualizarResumo();
+      });
+      el.addEventListener("change", () => {
+        atualizarBanner();
+        atualizarResumo();
+      });
+    });
+
+    numCotasEl.addEventListener("input", () => {
+      valorCotaPadraoEl.value = sugerirValorCotaPadrao().toFixed(2);
+      valorCotaParticipanteEl.value = valorCotaPadraoEl.value;
+      atualizarResumo();
+    });
+
+    document.getElementById("btnGuardarJogo").addEventListener("click", guardarJogo);
+    document.getElementById("btnSurpresinha").addEventListener("click", gerarSurpresinha);
+    document.getElementById("btnLimparMarcacao").addEventListener("click", () => {
+      selecionados.clear();
+      atualizarVisualSelecao();
+    });
+    document.getElementById("btnImprimir").addEventListener("click", () => window.print());
+    document.getElementById("btnConferirResultado").addEventListener("click", conferirResultadoSorteio);
+    document.getElementById("btnLimparConferencia").addEventListener("click", limparConferencia);
+
+    document.getElementById("btnCopiarResumo").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(resumoTextoEl.textContent);
+        feedbackCopiaEl.textContent = "Resumo copiado!";
+        setTimeout(() => { feedbackCopiaEl.textContent = ""; }, 2500);
+      } catch {
+        feedbackCopiaEl.textContent = "Selecione o texto abaixo para copiar.";
+      }
+    });
+
+    criarGrelha();
+    atualizarBanner();
+    atualizarVisualSelecao();
+    renderizarJogos();
+    renderizarParticipantes();
+    atualizarResumo();
+  </script>
+</body>
+</html>
